@@ -18,7 +18,10 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Input } from "../components/ui/input";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useLoginQuery } from "../api/auth/authQueries";
 import { z } from "zod";
+import { addUser } from "../state/auth/authSlice";
+import { useDispatch } from "react-redux";
 //react hook form
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,8 +34,11 @@ const loginSchema = z.object({
 type LoginSchema = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+  const [loginError, setLoginError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const loginFn = useLoginQuery();
   const {
     register,
     handleSubmit,
@@ -46,13 +52,32 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = async (data: LoginSchema) => {
-    alert("Login Sucess");
-    reset();
+  const onSubmit: SubmitHandler<LoginSchema> = async (data: LoginSchema) => {
+    try {
+      setLoginError("");
+      const response = await loginFn.mutateAsync(data);
+      dispatch(addUser(response.user));
+      console.log(response);
+      alert("Login Sucess");
+      if (response.user.role === "ADMIN") {
+        navigation({
+          to: "/admin/adminHome",
+        });
+      } else {
+        navigation({
+          to: "/customer/customerHome",
+        });
+      }
+      reset();
+    } catch (error) {
+      setLoginError("Invalid Email or Password");
+
+      console.error(error);
+    }
   };
 
   return (
-    <div className=" flex min-h-screen items-center justify-center bg-muted/30 p-5">
+    <div className=" flex bg-background min-h-screen items-center justify-center p-5">
       <Card className="z-10 w-full max-w-lg shadow-xl">
         <CardHeader className="mt-2 flex flex-col">
           <CardTitle className="flex items-center gap-3 text-3xl font-semibold">
@@ -65,6 +90,9 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
+          {loginError && (
+            <p className="text-red-600 text-[0.9rem]">{loginError}</p>
+          )}
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldSet className="mt-4">
               <FieldGroup className="space-y-2">

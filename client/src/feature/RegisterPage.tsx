@@ -13,6 +13,7 @@ import {
   FieldLabel,
   FieldSet,
 } from "../components/ui/field";
+import { useRegisterQuery } from "../api/auth/authQueries";
 
 import { Button } from "../components/ui/button";
 import { Link } from "@tanstack/react-router";
@@ -74,6 +75,7 @@ type RegisterSchema = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const registerFn = useRegisterQuery();
   const {
     register,
     handleSubmit,
@@ -93,14 +95,17 @@ export default function RegisterPage() {
 
   const onSubmit: SubmitHandler<RegisterSchema> = async (data) => {
     console.log(data);
-
-    alert("Registration Successful");
-
-    reset();
+    try {
+      await registerFn.mutateAsync(data);
+      alert("Registration Successful");
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-5">
+    <div className="flex min-h-screen items-center justify-center bg-background p-5">
       <Card className="w-full max-w-lg shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl font-semibold">Register</CardTitle>

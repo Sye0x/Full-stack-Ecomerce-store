@@ -10,11 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as CustomerRouteRouteImport } from './routes/customer/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CustomerCustomerHomeRouteImport } from './routes/customer/customerHome'
+import { Route as AdminAdminHomeRouteImport } from './routes/admin/adminHome'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerRouteRoute = CustomerRouteRouteImport.update({
+  id: '/customer',
+  path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,30 +36,73 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerCustomerHomeRoute = CustomerCustomerHomeRouteImport.update({
+  id: '/customerHome',
+  path: '/customerHome',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
+const AdminAdminHomeRoute = AdminAdminHomeRouteImport.update({
+  id: '/adminHome',
+  path: '/adminHome',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminHome': typeof AdminAdminHomeRoute
+  '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminHome': typeof AdminAdminHomeRoute
+  '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminHome': typeof AdminAdminHomeRoute
+  '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/register'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/register'
+    | '/admin/adminHome'
+    | '/customer/customerHome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/register'
-  id: '__root__' | '/' | '/register'
+  to:
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/register'
+    | '/admin/adminHome'
+    | '/customer/customerHome'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/register'
+    | '/admin/adminHome'
+    | '/customer/customerHome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  CustomerRouteRoute: typeof CustomerRouteRouteWithChildren
   RegisterRoute: typeof RegisterRoute
 }
 
@@ -58,6 +115,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer': {
+      id: '/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof CustomerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -65,11 +136,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/customerHome': {
+      id: '/customer/customerHome'
+      path: '/customerHome'
+      fullPath: '/customer/customerHome'
+      preLoaderRoute: typeof CustomerCustomerHomeRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
+    '/admin/adminHome': {
+      id: '/admin/adminHome'
+      path: '/adminHome'
+      fullPath: '/admin/adminHome'
+      preLoaderRoute: typeof AdminAdminHomeRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAdminHomeRoute: typeof AdminAdminHomeRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminHomeRoute: AdminAdminHomeRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
+interface CustomerRouteRouteChildren {
+  CustomerCustomerHomeRoute: typeof CustomerCustomerHomeRoute
+}
+
+const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
+  CustomerCustomerHomeRoute: CustomerCustomerHomeRoute,
+}
+
+const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
+  CustomerRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  CustomerRouteRoute: CustomerRouteRouteWithChildren,
   RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
