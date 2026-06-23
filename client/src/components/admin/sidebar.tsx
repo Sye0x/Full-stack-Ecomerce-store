@@ -1,12 +1,14 @@
-import { Logs, Menu, ShoppingCart, Tag, X, LogOut } from "lucide-react";
+import { Logs, Menu, ShoppingCart, Tag, X, LogOut, Home } from "lucide-react";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 export default function Sidebar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Category", icon: Tag },
-    { name: "Product", icon: ShoppingCart },
-    { name: "Orders", icon: Logs },
+    { name: "Home", icon: Home, link: "/admin/adminHome" },
+    { name: "Category", icon: Tag, link: "/admin//adminCategories" },
+    { name: "Product", icon: ShoppingCart, link: "/admin/adminHome" },
+    { name: "Orders", icon: Logs, link: "/admin/adminHome" },
   ];
 
   return (
@@ -49,13 +51,14 @@ export default function Sidebar() {
               const Icon = item.icon;
 
               return (
-                <button
+                <Link
+                  to={item.link}
                   key={item.name}
                   className="flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-background/30"
                 >
                   <Icon size={20} />
                   <span>{item.name}</span>
-                </button>
+                </Link>
               );
             })}
           </nav>

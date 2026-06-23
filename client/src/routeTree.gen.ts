@@ -15,6 +15,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerCustomerHomeRouteImport } from './routes/customer/customerHome'
 import { Route as AdminAdminHomeRouteImport } from './routes/admin/adminHome'
+import { Route as AdminAdminCategoriesRouteImport } from './routes/admin/adminCategories'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -46,12 +47,18 @@ const AdminAdminHomeRoute = AdminAdminHomeRouteImport.update({
   path: '/adminHome',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
+  id: '/adminCategories',
+  path: '/adminCategories',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteRouteWithChildren
   '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/customer': typeof CustomerRouteRouteWithChildren
   '/register': typeof RegisterRoute
+  '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/register'
+    | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/customer/customerHome'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/register'
+    | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/customer/customerHome'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/register'
+    | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/customer/customerHome'
   fileRoutesById: FileRoutesById
@@ -150,14 +162,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminHomeRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/adminCategories': {
+      id: '/admin/adminCategories'
+      path: '/adminCategories'
+      fullPath: '/admin/adminCategories'
+      preLoaderRoute: typeof AdminAdminCategoriesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
   AdminAdminHomeRoute: typeof AdminAdminHomeRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
   AdminAdminHomeRoute: AdminAdminHomeRoute,
 }
 
