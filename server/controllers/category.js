@@ -69,18 +69,6 @@ export const editCategory = async (req, res) => {
       });
     }
 
-    const existingCategory = await prisma.category.findUnique({
-      where: {
-        name,
-      },
-    });
-
-    if (existingCategory) {
-      return res.status(200).json({
-        message: "Category already exists.",
-      });
-    }
-
     const Category = await prisma.category.findUnique({
       where: { id },
     });
@@ -89,6 +77,20 @@ export const editCategory = async (req, res) => {
       return res.status(404).json({
         message: "Category not found.",
       });
+    }
+
+    if (name.trim() !== Category.name.trim()) {
+      const existingCategory = await prisma.category.findUnique({
+        where: {
+          name: name.trim(),
+        },
+      });
+
+      if (existingCategory) {
+        return res.status(409).json({
+          message: "Category already exists.",
+        });
+      }
     }
 
     const updatedCategory = await prisma.category.update({

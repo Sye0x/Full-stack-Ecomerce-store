@@ -49,7 +49,7 @@ export default function CategoryManagementPage() {
   const [categoryExistError, setCategoryExistError] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [categoryEditExistError, setCategoryEditExistError] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const { data: Category, isLoading } = useGetCategoryQuery();
 
   const AddCategoryFn = useAddCategoryQuery();
@@ -86,8 +86,9 @@ export default function CategoryManagementPage() {
     }
   };
 
-  const onEditSubmit = (id: string) => async (data: CategorySchema) => {
+  const onEditSubmit = () => async (data: CategorySchema) => {
     try {
+      const id = selectedCategory.id;
       const response = await EditCategoryFn.mutateAsync({ id, ...data });
       if (response.data.message === "Category already exists.") {
         setCategoryEditExistError(response.data.message);
@@ -235,8 +236,8 @@ export default function CategoryManagementPage() {
 
                         <td className="px-6 py-4 font-medium">{item.name}</td>
 
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {item.description}
+                        <td className="w-40 px-6 py-4 text-muted-foreground">
+                          <p className="truncate">{item.description}</p>
                         </td>
 
                         <td className="px-6 py-4">
@@ -247,6 +248,7 @@ export default function CategoryManagementPage() {
                                   className="text-green-500 cursor-pointer"
                                   size={20}
                                   onClick={() => {
+                                    setSelectedCategory(item);
                                     reset({
                                       name: item.name,
                                       description: item.description,
@@ -258,9 +260,7 @@ export default function CategoryManagementPage() {
                               </DialogTrigger>
 
                               <DialogContent>
-                                <form
-                                  onSubmit={handleSubmit(onEditSubmit(item.id))}
-                                >
+                                <form onSubmit={handleSubmit(onEditSubmit())}>
                                   <DialogHeader>
                                     <DialogTitle>Edit Category</DialogTitle>
                                     <p className="text-[0.8rem] text-red-500">
