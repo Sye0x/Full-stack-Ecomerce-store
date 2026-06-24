@@ -11,7 +11,7 @@ import {
 } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
 import authReducers from "./auth/authSlice";
-
+import sidbarReducers from "./adminSidebar/sidebarSlice";
 const storage = {
   getItem: (key: string) => {
     return Promise.resolve(localStorage.getItem(key));
@@ -32,6 +32,7 @@ const persistConfig = {
 
 const appReducer = combineReducers({
   auth: authReducers,
+  sidebar: sidbarReducers,
 });
 
 const rootReducer = (state: any, action: any) => {

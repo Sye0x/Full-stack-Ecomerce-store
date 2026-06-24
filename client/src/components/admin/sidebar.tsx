@@ -1,27 +1,31 @@
 import { Logs, Menu, ShoppingCart, Tag, X, LogOut, Home } from "lucide-react";
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { setMenuOpen } from "../../state/adminSidebar/sidebarSlice";
+
 export default function Sidebar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const menuOpen = useSelector((state: any) => state.sidebar.menuOpen);
 
   const navItems = [
     { name: "Home", icon: Home, link: "/admin/adminHome" },
     { name: "Category", icon: Tag, link: "/admin//adminCategories" },
-    { name: "Product", icon: ShoppingCart, link: "/admin/adminHome" },
+    { name: "Product", icon: ShoppingCart, link: "/admin/adminProduct" },
     { name: "Orders", icon: Logs, link: "/admin/adminHome" },
   ];
 
   return (
     <>
       <button
-        onClick={() => setMenuOpen(true)}
+        onClick={() => dispatch(setMenuOpen(true))}
         className="cursor-pointer rounded-md p-2 hover:scale-101"
       >
         <Menu size={28} />
       </button>
 
       <div
-        onClick={() => setMenuOpen(false)}
+        onClick={() => dispatch(setMenuOpen(false))}
         className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
           menuOpen
             ? "pointer-events-auto opacity-100"
@@ -39,7 +43,7 @@ export default function Sidebar() {
             <h2 className="text-xl font-semibold">Menu</h2>
 
             <button
-              onClick={() => setMenuOpen(false)}
+              onClick={() => dispatch(setMenuOpen(false))}
               className="rounded-md p-2 hover:bg-accent"
             >
               <X size={22} />

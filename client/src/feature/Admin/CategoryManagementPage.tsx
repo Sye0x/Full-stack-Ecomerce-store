@@ -48,7 +48,6 @@ export default function CategoryManagementPage() {
   const [open, setOpen] = useState(false);
   const [categoryExistError, setCategoryExistError] = useState("");
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [categoryEditExistError, setCategoryEditExistError] = useState("");
 
   const { data: Category, isLoading } = useGetCategoryQuery();
