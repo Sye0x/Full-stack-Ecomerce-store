@@ -10,3 +10,8 @@ export const useLogin = async (params: authParams) => {
   const { data } = await axiosInstance.post("/api/auth/login", params);
   return data;
 };
+
+export const useLogOut = async () => {
+  const { data } = await axiosInstance.post("/api/auth/logout");
+  return data;
+};

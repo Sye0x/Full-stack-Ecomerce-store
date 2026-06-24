@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRegister, useLogin } from "./authApi";
+import { useRegister, useLogin, useLogOut } from "./authApi";
 import type { authParams } from "../../types/types";
 
 export const useRegisterQuery = () => {
@@ -16,6 +16,16 @@ export const useLoginQuery = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: authParams) => useLogin(params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+    },
+  });
+};
+
+export const useLogoutQuery = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => useLogOut(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] });
     },

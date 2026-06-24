@@ -1,9 +1,11 @@
 import { Logs, Menu, ShoppingCart, Tag, X, LogOut, Home } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { setMenuOpen } from "../../state/adminSidebar/sidebarSlice";
-
+import { useLogoutQuery } from "../../api/auth/authQueries";
 export default function Sidebar() {
+  const navigation = useNavigate();
+  const LogoutFn = useLogoutQuery();
   const dispatch = useDispatch();
 
   const menuOpen = useSelector((state: any) => state.sidebar.menuOpen);
@@ -14,6 +16,12 @@ export default function Sidebar() {
     { name: "Product", icon: ShoppingCart, link: "/admin/adminProduct" },
     { name: "Orders", icon: Logs, link: "/admin/adminHome" },
   ];
+
+  const handleLogOut = async () => {
+    dispatch(setMenuOpen(false));
+    await LogoutFn.mutateAsync();
+    navigation({ to: "/" });
+  };
 
   return (
     <>
@@ -68,7 +76,10 @@ export default function Sidebar() {
           </nav>
         </div>
         <div className="p-2">
-          <button className="h-15 w-full flex justify-center items-center rounded-2xl gap-3 bg-red-600 text-white text-xl font-bold">
+          <button
+            onClick={() => handleLogOut()}
+            className="h-15 w-full flex justify-center items-center rounded-2xl gap-3 bg-red-600 text-white text-xl font-bold"
+          >
             Logout
             <LogOut />
           </button>
