@@ -24,6 +24,8 @@ import { Textarea } from "../../components/ui/textarea";
 import {
   useGetCategoryQuery,
   useAddCategoryQuery,
+  useDeleteCategoryQuery,
+  useEditCategoryQuery,
 } from "../../api/category/categoryQueries";
 
 import { z } from "zod";
@@ -44,10 +46,16 @@ type CategorySchema = z.infer<typeof categorySchema>;
 
 export default function CategoryManagementPage() {
   const [open, setOpen] = useState(false);
+  const [categoryExistError, setCategoryExistError] = useState("");
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [categoryEditExistError, setCategoryEditExistError] = useState("");
 
   const { data: Category, isLoading } = useGetCategoryQuery();
 
   const AddCategoryFn = useAddCategoryQuery();
+  const EditCategoryFn = useEditCategoryQuery();
+  const DeleteCategoryFn = useDeleteCategoryQuery();
 
   const {
     register,
@@ -64,10 +72,39 @@ export default function CategoryManagementPage() {
 
   const onSubmit: SubmitHandler<CategorySchema> = async (data) => {
     try {
-      await AddCategoryFn.mutateAsync(data);
+      console.log("HEE");
 
-      reset();
-      setOpen(false);
+      const response = await AddCategoryFn.mutateAsync(data);
+
+      if (response.data.message === "Category already exists.") {
+        setCategoryExistError(response.data.message);
+      } else {
+        reset();
+        setOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onEditSubmit = (id: string) => async (data: CategorySchema) => {
+    try {
+      const response = await EditCategoryFn.mutateAsync({ id, ...data });
+      if (response.data.message === "Category already exists.") {
+        setCategoryEditExistError(response.data.message);
+      } else {
+        reset();
+        setEditOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const removeCategory = async (id: string) => {
+    try {
+      console.log(id);
+      await DeleteCategoryFn.mutateAsync({ id });
     } catch (err) {
       console.error(err);
     }
@@ -87,7 +124,15 @@ export default function CategoryManagementPage() {
 
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Plus size={30} />
+                <Plus
+                  size={30}
+                  onClick={() =>
+                    reset({
+                      name: "",
+                      description: "",
+                    })
+                  }
+                />
               </DialogTrigger>
 
               <DialogContent>
@@ -99,6 +144,9 @@ export default function CategoryManagementPage() {
                       Create a category that can group similar products
                       together.
                     </DialogDescription>
+                    <p className="text-[0.8rem] text-red-500">
+                      {categoryExistError}
+                    </p>
                   </DialogHeader>
 
                   <FieldGroup className="mt-5 space-y-4">
@@ -194,13 +242,95 @@ export default function CategoryManagementPage() {
 
                         <td className="px-6 py-4">
                           <div className="flex justify-center gap-2">
-                            <Button size="icon" variant="outline">
-                              <Pencil className="h-4 w-4" />
-                            </Button>
+                            <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                              <DialogTrigger asChild>
+                                <Pencil
+                                  className="text-green-500 cursor-pointer"
+                                  size={20}
+                                  onClick={() => {
+                                    reset({
+                                      name: item.name,
+                                      description: item.description,
+                                    });
 
-                            <Button size="icon" variant="destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                                    setEditOpen(true);
+                                  }}
+                                />
+                              </DialogTrigger>
+
+                              <DialogContent>
+                                <form
+                                  onSubmit={handleSubmit(onEditSubmit(item.id))}
+                                >
+                                  <DialogHeader>
+                                    <DialogTitle>Edit Category</DialogTitle>
+                                    <p className="text-[0.8rem] text-red-500">
+                                      {categoryEditExistError}
+                                    </p>
+                                  </DialogHeader>
+
+                                  <FieldGroup className="mt-5 space-y-4">
+                                    <Field>
+                                      <Label htmlFor="name">Name</Label>
+
+                                      <Input
+                                        id="name"
+                                        placeholder="Category Name"
+                                        {...register("name")}
+                                      />
+
+                                      {errors.name && (
+                                        <FieldError>
+                                          {errors.name.message}
+                                        </FieldError>
+                                      )}
+                                    </Field>
+
+                                    <Field>
+                                      <Label htmlFor="description">
+                                        Description
+                                      </Label>
+
+                                      <Textarea
+                                        id="description"
+                                        placeholder="Enter category description..."
+                                        {...register("description")}
+                                      />
+
+                                      {errors.description && (
+                                        <FieldError>
+                                          {errors.description.message}
+                                        </FieldError>
+                                      )}
+                                    </Field>
+                                  </FieldGroup>
+
+                                  <DialogFooter className="mt-6">
+                                    <DialogClose asChild>
+                                      <Button type="button" variant="outline">
+                                        Cancel
+                                      </Button>
+                                    </DialogClose>
+
+                                    <Button
+                                      type="submit"
+                                      disabled={AddCategoryFn.isPending}
+                                    >
+                                      {AddCategoryFn.isPending
+                                        ? "Saving..."
+                                        : "Save"}
+                                    </Button>
+                                  </DialogFooter>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
+
+                            <button
+                              onClick={() => removeCategory(item.id)}
+                              className="cursor-pointer"
+                            >
+                              <Trash2 className="text-red-500" size={20} />
+                            </button>
                           </div>
                         </td>
                       </tr>
