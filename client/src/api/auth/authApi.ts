@@ -11,7 +11,12 @@ export const useLogin = async (params: authParams) => {
   return data;
 };
 
+import { persistor } from "../../state/store";
+
 export const useLogOut = async () => {
   const { data } = await axiosInstance.post("/api/auth/logout");
+
+  await persistor.purge();
+
   return data;
 };

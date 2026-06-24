@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import storage from "redux-persist/es/storage";
 
 export interface AuthState {
   id: string;
