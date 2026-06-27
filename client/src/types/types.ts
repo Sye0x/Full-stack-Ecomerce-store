@@ -7,5 +7,5 @@ export type categoryParams = {
 };
 
 export type productParams = {
-  [key: string]: string | File;
+  [key: string]: string;
 };

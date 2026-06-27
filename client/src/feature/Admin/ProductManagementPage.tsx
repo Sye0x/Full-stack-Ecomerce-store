@@ -8,12 +8,20 @@ import {
   CardFooter,
 } from "../../components/ui/card";
 
-import { useGetProductsQuery } from "../../api/product/productQueries";
+import {
+  useDeleteProductQuery,
+  useGetProductsQuery,
+} from "../../api/product/productQueries";
 
 import AddProductForm from "../../components/admin/AddProductForm";
 
 export default function ProductManagementPage() {
   const { data: products, isLoading } = useGetProductsQuery();
+  const deleteProductFn = useDeleteProductQuery();
+
+  const deleteProduct = async (id: string) => {
+    await deleteProductFn.mutateAsync({ id });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,7 +106,11 @@ export default function ProductManagementPage() {
                   Edit
                 </Button>
 
-                <Button className="flex-1" variant="destructive">
+                <Button
+                  className="flex-1"
+                  variant="destructive"
+                  onClick={() => deleteProduct(product.id)}
+                >
                   Delete
                 </Button>
               </CardFooter>

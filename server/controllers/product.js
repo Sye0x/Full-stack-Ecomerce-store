@@ -75,3 +75,28 @@ export const addProduct = async (req, res) => {
     });
   }
 };
+
+export const deleteProduct = async (req, res) => {
+  const { id } = req.body;
+  console.log(id);
+  try {
+    if (!id) {
+      return res.status(400).json({
+        message: "Id is required.",
+      });
+    }
+
+    await prisma.product.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({
+      message: "Product Deleted Sucessfully",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};
