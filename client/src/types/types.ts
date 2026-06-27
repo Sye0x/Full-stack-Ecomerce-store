@@ -5,3 +5,7 @@ export type authParams = {
 export type categoryParams = {
   [key: string]: string;
 };
+
+export type productParams = {
+  [key: string]: string | File;
+};

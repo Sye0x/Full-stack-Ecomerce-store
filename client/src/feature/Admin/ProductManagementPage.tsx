@@ -1,37 +1,20 @@
 import Sidebar from "../../components/admin/sidebar";
-import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../components/ui/dialog";
-
-import { Field, FieldError, FieldGroup } from "../../components/ui/field";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { useState } from "react";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardFooter,
+} from "../../components/ui/card";
 
-import { useGetCategoryQuery } from "../../api/category/categoryQueries";
+import { useGetProductsQuery } from "../../api/product/productQueries";
+
+import AddProductForm from "../../components/admin/AddProductForm";
 
 export default function ProductManagementPage() {
+  const { data: products, isLoading } = useGetProductsQuery();
+
   return (
     <div className="min-h-screen bg-background">
       <header className="flex h-16 justify-between items-center gap-4 border-b bg-sidebar px-6">
@@ -41,185 +24,88 @@ export default function ProductManagementPage() {
         </div>
         <AddProductForm />
       </header>
-      <main className="p-6">{/* Your page content */}</main>
+      <main className="p-6 grid grid-cols-3 gap-10">
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          products?.map((product: any) => (
+            <Card
+              key={product.id}
+              className="overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="h-60 w-full bg-muted">
+                <img
+                  src={`http://localhost:3000${product.imageUrl}`}
+                  alt={product.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{product.name}</CardTitle>
+
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      product.status === "ACTIVE"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {product.status}
+                  </span>
+                </div>
+
+                <p className="text-sm text-muted-foreground">
+                  {product.category?.name ?? "No Category"}
+                </p>
+              </CardHeader>
+
+              <CardContent className="space-y-3">
+                <p className="line-clamp-3 text-sm text-muted-foreground">
+                  {product.description}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Price</p>
+
+                    <p className="text-xl font-bold text-primary">
+                      ${product.price}
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Stock</p>
+
+                    <p
+                      className={`font-semibold ${
+                        product.stockQuantity > 10
+                          ? "text-green-600"
+                          : product.stockQuantity > 0
+                            ? "text-yellow-600"
+                            : "text-red-600"
+                      }`}
+                    >
+                      {product.stockQuantity}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+
+              <CardFooter className="gap-3">
+                <Button className="flex-1" variant="outline">
+                  Edit
+                </Button>
+
+                <Button className="flex-1" variant="destructive">
+                  Delete
+                </Button>
+              </CardFooter>
+            </Card>
+          ))
+        )}
+      </main>
     </div>
-  );
-}
-
-const productSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name must be at least 3 characters")
-    .max(50, "Name is too long")
-    .regex(
-      /^[A-Za-z0-9\s\-&()]+$/,
-      "Name can only contain letters, numbers, spaces, -, &, and ().",
-    ),
-
-  description: z
-    .string()
-    .min(10, "Description must be at least 10 characters.")
-    .max(500, "Description is too long."),
-
-  price: z
-    .string()
-    .regex(
-      /^(0|[1-9]\d*)(\.\d{1,2})?$/,
-      "Enter a valid price (e.g. 100 or 99.99).",
-    ),
-
-  stockQuantity: z
-    .string()
-    .regex(
-      /^(0|[1-9]\d*)$/,
-      "Stock quantity must be a non-negative whole number.",
-    ),
-
-  categoryId: z.string().min(1, "Please select a category."),
-
-  imageUrl: z.string().url("Please enter a valid image URL."),
-});
-
-type ProductSchema = z.infer<typeof productSchema>;
-
-function AddProductForm() {
-  const [open, setOpen] = useState(false);
-  const [categoryExistError, setCategoryExistError] = useState("");
-  const { data: Category, isLoading } = useGetCategoryQuery();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ProductSchema>({
-    resolver: zodResolver(productSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "",
-      stockQuantity: "",
-      categoryId: "",
-      imageUrl: "",
-    },
-  });
-
-  const onSubmit: SubmitHandler<ProductSchema> = async (data) => {
-    try {
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Plus
-          size={30}
-          onClick={() =>
-            reset({
-              name: "",
-              description: "",
-            })
-          }
-        />
-      </DialogTrigger>
-
-      <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>Add Product</DialogTitle>
-            <DialogDescription>
-              Create a product to put in store.
-            </DialogDescription>
-            <p className="text-[0.8rem] text-red-500">{categoryExistError}</p>
-          </DialogHeader>
-
-          <FieldGroup className="mt-5 space-y-4">
-            <Field>
-              <Label htmlFor="name">Name</Label>
-
-              <Input
-                id="name"
-                placeholder="Product Name"
-                {...register("name")}
-              />
-
-              {errors.name && <FieldError>{errors.name.message}</FieldError>}
-            </Field>
-
-            <Field>
-              <Label htmlFor="description">Description</Label>
-
-              <Textarea
-                id="description"
-                placeholder="Enter product description..."
-                {...register("description")}
-              />
-
-              {errors.description && (
-                <FieldError>{errors.description.message}</FieldError>
-              )}
-            </Field>
-
-            <Field>
-              <Label htmlFor="price">Price</Label>
-
-              <Input
-                id="price"
-                placeholder="Product Price"
-                {...register("price")}
-              />
-
-              {errors.price && <FieldError>{errors.price.message}</FieldError>}
-            </Field>
-
-            <Field>
-              <Label htmlFor="stockQuantity">Stock Quantity</Label>
-
-              <Input
-                id="stockQuantity"
-                placeholder="Stock Quantity"
-                {...register("stockQuantity")}
-              />
-
-              {errors.stockQuantity && (
-                <FieldError>{errors.stockQuantity.message}</FieldError>
-              )}
-            </Field>
-            <Field>
-              <Select>
-                <SelectTrigger className="w-45">
-                  <SelectValue placeholder="Catefories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {isLoading ? (
-                      <SelectItem value="">Loading</SelectItem>
-                    ) : (
-                      Category.map((item: any) => (
-                        <SelectItem value={item.id}>{item.name}</SelectItem>
-                      ))
-                    )}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-
-          <DialogFooter className="mt-6">
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-
-            <Button type="submit">
-              {/* {AddCategoryFn.isPending ? "Saving..." : "Save"} */}
-              Save
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }

@@ -36,10 +36,13 @@ const categorySchema = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
-    .max(50, "Name is too long")
+    .max(20, "Name is too long")
     .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
 
-  description: z.string().min(1, "Description is required"),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(30, "Description is too long"),
 });
 
 type CategorySchema = z.infer<typeof categorySchema>;
@@ -196,7 +199,7 @@ export default function CategoryManagementPage() {
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="m-5 overflow-hidden rounded-lg border">
+            <div className="m-5 overflow-x-scroll rounded-lg border">
               <table className="w-full border-collapse">
                 <thead className="bg-muted">
                   <tr>
@@ -232,11 +235,13 @@ export default function CategoryManagementPage() {
                   ) : (
                     Category.map((item: any, index: number) => (
                       <tr key={item.id} className="border-t hover:bg-muted/40">
-                        <td className="px-6 py-4">{index + 1}</td>
+                        <td className="w-25 px-6 py-4">{index + 1}</td>
 
-                        <td className="px-6 py-4 font-medium">{item.name}</td>
+                        <td className="w-25 px-6 py-4 font-medium">
+                          {item.name}
+                        </td>
 
-                        <td className="w-40 px-6 py-4 text-muted-foreground">
+                        <td className="w-25 px-6 py-4 text-muted-foreground">
                           <p className="truncate">{item.description}</p>
                         </td>
 
