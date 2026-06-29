@@ -14,6 +14,7 @@ import { Route as CustomerRouteRouteImport } from './routes/customer/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerCustomerHomeRouteImport } from './routes/customer/customerHome'
+import { Route as CustomerCustomerCartRouteImport } from './routes/customer/customerCart'
 import { Route as AdminAdminProductRouteImport } from './routes/admin/adminProduct'
 import { Route as AdminAdminHomeRouteImport } from './routes/admin/adminHome'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/admin/adminCategories'
@@ -43,6 +44,11 @@ const CustomerCustomerHomeRoute = CustomerCustomerHomeRouteImport.update({
   path: '/customerHome',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
+const CustomerCustomerCartRoute = CustomerCustomerCartRouteImport.update({
+  id: '/customerCart',
+  path: '/customerCart',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
 const AdminAdminProductRoute = AdminAdminProductRouteImport.update({
   id: '/adminProduct',
   path: '/adminProduct',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/admin/adminProduct': typeof AdminAdminProductRoute
+  '/customer/customerCart': typeof CustomerCustomerCartRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/admin/adminProduct': typeof AdminAdminProductRoute
+  '/customer/customerCart': typeof CustomerCustomerCartRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/admin/adminCategories': typeof AdminAdminCategoriesRoute
   '/admin/adminHome': typeof AdminAdminHomeRoute
   '/admin/adminProduct': typeof AdminAdminProductRoute
+  '/customer/customerCart': typeof CustomerCustomerCartRoute
   '/customer/customerHome': typeof CustomerCustomerHomeRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/admin/adminProduct'
+    | '/customer/customerCart'
     | '/customer/customerHome'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/admin/adminProduct'
+    | '/customer/customerCart'
     | '/customer/customerHome'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/admin/adminCategories'
     | '/admin/adminHome'
     | '/admin/adminProduct'
+    | '/customer/customerCart'
     | '/customer/customerHome'
   fileRoutesById: FileRoutesById
 }
@@ -167,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerCustomerHomeRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
+    '/customer/customerCart': {
+      id: '/customer/customerCart'
+      path: '/customerCart'
+      fullPath: '/customer/customerCart'
+      preLoaderRoute: typeof CustomerCustomerCartRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
     '/admin/adminProduct': {
       id: '/admin/adminProduct'
       path: '/adminProduct'
@@ -208,10 +227,12 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 interface CustomerRouteRouteChildren {
+  CustomerCustomerCartRoute: typeof CustomerCustomerCartRoute
   CustomerCustomerHomeRoute: typeof CustomerCustomerHomeRoute
 }
 
 const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
+  CustomerCustomerCartRoute: CustomerCustomerCartRoute,
   CustomerCustomerHomeRoute: CustomerCustomerHomeRoute,
 }
 

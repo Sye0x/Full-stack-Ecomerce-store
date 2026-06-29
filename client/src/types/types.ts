@@ -9,3 +9,7 @@ export type categoryParams = {
 export type productParams = {
   [key: string]: string;
 };
+
+export type cartParams = {
+  [key: string]: string;
+};

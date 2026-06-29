@@ -59,6 +59,7 @@ export const addCategory = async (req, res) => {
     });
   }
 };
+
 export const editCategory = async (req, res) => {
   const { id, name, description } = req.body;
 

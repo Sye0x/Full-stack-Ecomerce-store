@@ -110,8 +110,8 @@ export const editProduct = async (req, res) => {
       });
     }
 
-    const setStatus = Number(stockQuantity) === 0 ? "OUT_OF_STOCK" : status;
-
+    let setStatus = Number(stockQuantity) === 0 ? "OUT_OF_STOCK" : status;
+    setStatus = status === "INACTIVE" ? status : setStatus;
     const imageUrl = req.file
       ? `/uploads/${req.file.filename}`
       : existingProduct.imageUrl;
