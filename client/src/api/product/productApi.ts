@@ -6,6 +6,11 @@ export const useAddProduct = async (formData: FormData) => {
   return response.data;
 };
 
+export const useEditProduct = async (formData: FormData) => {
+  const response = await axiosInstance.put("/api/product", formData);
+  return response.data;
+};
+
 export const useGetProducts = async () => {
   const response = await axiosInstance.get("/api/product");
   return response.data;

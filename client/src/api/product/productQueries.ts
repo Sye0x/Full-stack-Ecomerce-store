@@ -1,5 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAddProduct, useDeleteProduct, useGetProducts } from "./productApi";
+import {
+  useAddProduct,
+  useDeleteProduct,
+  useEditProduct,
+  useGetProducts,
+} from "./productApi";
 import type { productParams } from "../../types/types";
 
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +13,16 @@ export const useAddProductQuery = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (formData: FormData) => useAddProduct(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};
+
+export const useEditProductQuery = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (formData: FormData) => useEditProduct(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },

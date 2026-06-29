@@ -8,28 +8,28 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../components/ui/dialog";
+} from "../../ui/dialog";
 import { Controller } from "react-hook-form";
 
-import { Field, FieldError, FieldGroup } from "../../components/ui/field";
+import { Field, FieldError, FieldGroup } from "../../ui/field";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useState } from "react";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import { Button } from "../../components/ui/button";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
+import { Textarea } from "../../ui/textarea";
+import { Button } from "../../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from "../../ui/select";
 
-import { useGetCategoryQuery } from "../../api/category/categoryQueries";
-import { useAddProductQuery } from "../../api/product/productQueries";
+import { useGetCategoryQuery } from "../../../api/category/categoryQueries";
+import { useAddProductQuery } from "../../../api/product/productQueries";
 
 const productSchema = z.object({
   name: z
@@ -182,6 +182,7 @@ export default function AddProductForm() {
               )}
             </Field>
             <Field>
+              <Label htmlFor="Category">Category</Label>
               <Controller
                 name="categoryId"
                 control={control}

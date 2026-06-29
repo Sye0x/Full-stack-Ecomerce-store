@@ -40,6 +40,11 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    let status = "ACTIVE";
+    if (stockQuantity == 0) {
+      status = "OUT_OF_STOCK";
+    }
+
     const existingProduct = await prisma.product.findFirst({
       where: { name },
     });
@@ -60,6 +65,7 @@ export const addProduct = async (req, res) => {
         stockQuantity: Number(stockQuantity),
         categoryId,
         imageUrl,
+        status,
       },
     });
 
@@ -76,13 +82,82 @@ export const addProduct = async (req, res) => {
   }
 };
 
+export const editProduct = async (req, res) => {
+  try {
+    const { id, name, description, stockQuantity, price, categoryId, status } =
+      req.body;
+
+    if (
+      !id ||
+      !name ||
+      !description ||
+      !stockQuantity ||
+      !price ||
+      !categoryId
+    ) {
+      return res.status(400).json({
+        message: "All fields are required.",
+      });
+    }
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({
+        message: "Product not found.",
+      });
+    }
+
+    const setStatus = Number(stockQuantity) === 0 ? "OUT_OF_STOCK" : status;
+
+    const imageUrl = req.file
+      ? `/uploads/${req.file.filename}`
+      : existingProduct.imageUrl;
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        price: Number(price),
+        stockQuantity: Number(stockQuantity),
+        categoryId,
+        imageUrl,
+        status: setStatus,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Product updated successfully.",
+      product,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};
+
 export const deleteProduct = async (req, res) => {
   const { id } = req.body;
-  console.log(id);
   try {
     if (!id) {
       return res.status(400).json({
         message: "Id is required.",
+      });
+    }
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      return res.status(200).json({
+        message: "Product does not exists.",
       });
     }
 
