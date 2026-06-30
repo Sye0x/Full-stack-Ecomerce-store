@@ -13,3 +13,7 @@ export type productParams = {
 export type cartParams = {
   [key: string]: string;
 };
+
+export type orderParams = {
+  [key: string]: string;
+};

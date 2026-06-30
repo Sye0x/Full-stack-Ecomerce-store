@@ -1,4 +1,4 @@
-import { ShoppingBasket, Search, LogOut } from "lucide-react";
+import { Search, LogOut, ReceiptText, ShoppingCart } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -20,10 +20,12 @@ export default function HomePage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const { data: products, isLoading } = useGetProductsQuery();
+
   const addCartItemFn = useAddCartQuery();
   const userId = useSelector((state: RootState) => state.auth.id);
   const { data: cartItem } = useGetCartsQuery({ userId });
+  const { data: products, isLoading } = useGetProductsQuery();
+
   const LogOutFn = useLogoutQuery();
 
   const addItemToCart = (productId: string, price: string) => {
@@ -73,10 +75,15 @@ export default function HomePage() {
       <header className=" border-b bg-sidebar backdrop-blur">
         <div className=" flex h-16  items-center justify-between px-8">
           <h1 className="text-3xl font-extrabold tracking-tight">Store</h1>
-
           <div className="flex items-center gap-12">
+            <ReceiptText
+              size={28}
+              className="hover:text-foreground/50 cursor-pointer"
+              onClick={() => navigation({ to: "/customer/customerOrder" })}
+            />
+
             <div className="relative">
-              <ShoppingBasket
+              <ShoppingCart
                 size={28}
                 onClick={() => navigation({ to: "/customer/customerCart" })}
                 className="hover:text-foreground/50 cursor-pointer"
@@ -86,11 +93,13 @@ export default function HomePage() {
                 {cartItem?.length ?? 0}
               </span>
             </div>
-            <LogOut
-              size={28}
+
+            <button
               onClick={() => Logout()}
-              className="text-red-600 cursor-pointer hover:text-red-400"
-            />
+              className="flex items-center gap-2 bg-red-500 p-2 rounded-2xl cursor-pointer"
+            >
+              <LogOut size={28} className="text-white " />
+            </button>
           </div>
         </div>
       </header>

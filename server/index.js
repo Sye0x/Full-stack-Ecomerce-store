@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.js";
 import categoryRoutes from "./routes/category.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
+import orderRoutes from "./routes/order.js";
 import path from "path";
 dotenv.config();
 
@@ -22,7 +23,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/order", orderRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 app.get("/", (req, res) => {
   res.json({
     message: "Server running successfully",

@@ -52,6 +52,22 @@ export const addItem = async (req, res) => {
       });
     }
 
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    if (product.stockQuantity <= 0) {
+      return res.status(400).json({
+        message: "Product is out of stock",
+      });
+    }
+
     const existingItem = await prisma.cartItem.findFirst({
       where: {
         cartId: cart.id,
@@ -70,6 +86,17 @@ export const addItem = async (req, res) => {
           },
         },
       });
+
+      await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          stockQuantity: {
+            decrement: 1,
+          },
+        },
+      });
     } else {
       await prisma.cartItem.create({
         data: {
@@ -77,6 +104,17 @@ export const addItem = async (req, res) => {
           productId,
           quantity: 1,
           unitPrice: price,
+        },
+      });
+
+      await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          stockQuantity: {
+            decrement: 1,
+          },
         },
       });
     }
@@ -136,10 +174,30 @@ export const removeItem = async (req, res) => {
           },
         },
       });
+      await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          stockQuantity: {
+            increment: 1,
+          },
+        },
+      });
     } else {
       await prisma.cartItem.delete({
         where: {
           id: existingItem.id,
+        },
+      });
+      await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          stockQuantity: {
+            increment: 1,
+          },
         },
       });
     }

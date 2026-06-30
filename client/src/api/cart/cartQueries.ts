@@ -10,6 +10,7 @@ export const useAddCartQuery = () => {
     mutationFn: (params: cartParams) => useAddItem(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 };
@@ -21,6 +22,7 @@ export const useSubCartQuery = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 };
