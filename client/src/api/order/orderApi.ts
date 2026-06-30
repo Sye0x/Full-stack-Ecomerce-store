@@ -18,3 +18,15 @@ export const useGetUserOrder = async (params: orderParams) => {
 
   return response.data;
 };
+
+export const useSetOrderStatus = async (params: orderParams) => {
+  const response = await axiosInstance.post("/api/order/statusUpdate", params);
+
+  return response.data;
+};
+
+export const useGetOrder = async () => {
+  const response = await axiosInstance.get("/api/order");
+
+  return response.data;
+};

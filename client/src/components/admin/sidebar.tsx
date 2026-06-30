@@ -14,7 +14,7 @@ export default function Sidebar() {
     { name: "Home", icon: Home, link: "/admin/adminHome" },
     { name: "Category", icon: Tag, link: "/admin//adminCategories" },
     { name: "Product", icon: ShoppingCart, link: "/admin/adminProduct" },
-    { name: "Orders", icon: Logs, link: "/admin/adminHome" },
+    { name: "Orders", icon: Logs, link: "/admin/adminOrders" },
   ];
 
   const handleLogOut = async () => {

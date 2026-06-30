@@ -11,7 +11,12 @@ export const useSubItem = async (params: cartParams) => {
   return response.data;
 };
 
-export const useGetItems = async (params: cartParams) => {
-  const response = await axiosInstance.get("/api/cart", params);
+export const useGetCart = async (userId: string) => {
+  const response = await axiosInstance.get("/api/cart", {
+    params: {
+      userId,
+    },
+  });
+
   return response.data;
 };

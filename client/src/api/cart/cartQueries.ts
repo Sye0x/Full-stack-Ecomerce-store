@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAddItem, useGetItems, useSubItem } from "./cartApi";
+import { useAddItem, useGetCart, useSubItem } from "./cartApi";
 import type { cartParams } from "../../types/types";
 
 import { useQuery } from "@tanstack/react-query";
@@ -27,9 +27,10 @@ export const useSubCartQuery = () => {
   });
 };
 
-export const useGetCartsQuery = (params: cartParams) => {
+export const useGetCartsQuery = (params: { userId: string }) => {
   return useQuery({
-    queryKey: ["cart"],
-    queryFn: () => useGetItems(params),
+    queryKey: ["cart", params.userId],
+    queryFn: () => useGetCart(params.userId),
+    enabled: !!params.userId,
   });
 };

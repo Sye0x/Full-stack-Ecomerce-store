@@ -1,6 +1,68 @@
 import express from "express";
 import { prisma } from "../lib/prisma.js";
 
+export const setStatus = async (req, res) => {
+  const { id, status } = req.body;
+  try {
+    await prisma.order.update({
+      where: { id },
+      data: { status },
+    });
+    if (status === "DELIVERED") {
+      await prisma.order.update({
+        where: { id },
+        data: { paymentStatus: "PAID" },
+      });
+    } else if (status === "CANCELLED") {
+      await prisma.order.update({
+        where: { id },
+        data: { paymentStatus: "FAILED" },
+      });
+    } else {
+      await prisma.order.update({
+        where: { id },
+        data: { paymentStatus: "PENDING" },
+      });
+    }
+
+    res.status(200).json({
+      message: "Updated status",
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};
+
+export const getOrder = async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return res.status(200).json(orders);
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};
+
 export const getUserOrder = async (req, res) => {
   const { userId } = req.query;
 
