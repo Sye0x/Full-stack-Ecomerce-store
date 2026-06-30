@@ -12,7 +12,7 @@ import { useGetProductsQuery } from "../../api/product/productQueries";
 import { useAddCartQuery, useGetCartsQuery } from "../../api/cart/cartQueries";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../state/store";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function HomePage() {
   const navigation = useNavigate();

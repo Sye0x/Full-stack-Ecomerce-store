@@ -5,9 +5,11 @@ import {
   useGetCartsQuery,
   useSubCartQuery,
 } from "../../api/cart/cartQueries";
-import { useGetProductsQuery } from "../../api/product/productQueries";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function CartPage() {
+  const navigation = useNavigate();
   const userId = useSelector((state: RootState) => state.auth.id);
   const { data: cartItem, isLoading } = useGetCartsQuery({ userId });
   const addCartItemFn = useAddCartQuery();
@@ -26,7 +28,15 @@ export default function CartPage() {
     <div className="bg-background min-h-screen">
       <header className=" border-b bg-sidebar backdrop-blur">
         <div className=" flex h-16  items-center justify-between px-8">
-          <h1 className="text-3xl font-extrabold tracking-tight">Carts</h1>
+          <div className="flex items-center gap-5">
+            <ArrowLeft
+              size={30}
+              onClick={() => {
+                navigation({ to: "/customer/customerHome" });
+              }}
+            />
+            <h1 className="text-3xl font-extrabold tracking-tight">Carts</h1>
+          </div>
         </div>
       </header>
       <main className="mx-auto flex max-w-7xl gap-8 p-8">
