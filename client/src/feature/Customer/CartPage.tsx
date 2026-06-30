@@ -34,6 +34,7 @@ export default function CartPage() {
               onClick={() => {
                 navigation({ to: "/customer/customerHome" });
               }}
+              className="hover:text-foreground/50 cursor-pointer"
             />
             <h1 className="text-3xl font-extrabold tracking-tight">Carts</h1>
           </div>
