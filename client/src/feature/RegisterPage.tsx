@@ -16,7 +16,7 @@ import {
 import { useRegisterQuery } from "../api/auth/authQueries";
 
 import { Button } from "../components/ui/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Input } from "../components/ui/input";
 
 import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin } from "lucide-react";
@@ -26,6 +26,7 @@ import { z } from "zod";
 
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import RegisterSuccessAlert from "../components/alerts/registerSuccess";
 
 const registerSchema = z
   .object({
@@ -73,8 +74,10 @@ const registerSchema = z
 type RegisterSchema = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
+  const navigation = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const registerFn = useRegisterQuery();
   const {
     register,
@@ -97,8 +100,14 @@ export default function RegisterPage() {
     console.log(data);
     try {
       await registerFn.mutateAsync(data);
-      alert("Registration Successful");
-      reset();
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        reset();
+        navigation({
+          to: "/",
+        });
+      }, 2000);
     } catch (error) {
       console.error(error);
     }
@@ -279,6 +288,11 @@ export default function RegisterPage() {
           </form>
         </CardContent>
       </Card>
+      {showSuccess && (
+        <div className="fixed right-6 bottom-5 z-50">
+          <RegisterSuccessAlert />
+        </div>
+      )}
     </div>
   );
 }

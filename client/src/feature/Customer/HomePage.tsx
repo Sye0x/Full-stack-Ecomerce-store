@@ -184,7 +184,9 @@ export default function HomePage() {
                                 : "text-red-600"
                           }`}
                         >
-                          {product.stockQuantity}
+                          {product.status === "OUT_OF_STOCK"
+                            ? 0
+                            : product.stockQuantity}
                         </p>
                       </div>
                     </div>

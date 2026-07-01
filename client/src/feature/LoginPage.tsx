@@ -25,6 +25,7 @@ import { useDispatch } from "react-redux";
 //react hook form
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LoginSuccessAlert from "../components/alerts/loginSucess";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -38,6 +39,7 @@ export default function LoginPage() {
   const navigation = useNavigate();
   const [loginError, setLoginError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const loginFn = useLoginQuery();
   const {
     register,
@@ -58,17 +60,20 @@ export default function LoginPage() {
       const response = await loginFn.mutateAsync(data);
       dispatch(addUser(response.user));
       console.log(response);
-      alert("Login Sucess");
-      if (response.user.role === "ADMIN") {
-        navigation({
-          to: "/admin/adminHome",
-        });
-      } else {
-        navigation({
-          to: "/customer/customerHome",
-        });
-      }
-      reset();
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        if (response.user.role === "ADMIN") {
+          navigation({
+            to: "/admin/adminHome",
+          });
+        } else {
+          navigation({
+            to: "/customer/customerHome",
+          });
+        }
+        reset();
+      }, 2000);
     } catch (error) {
       setLoginError("Invalid Email or Password");
 
@@ -164,6 +169,11 @@ export default function LoginPage() {
           </form>
         </CardContent>
       </Card>
+      {showSuccess && (
+        <div className="fixed right-6 bottom-5 z-50">
+          <LoginSuccessAlert />
+        </div>
+      )}
     </div>
   );
 }
