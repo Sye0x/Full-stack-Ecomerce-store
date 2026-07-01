@@ -11,19 +11,31 @@ import {
 import {
   useDeleteProductQuery,
   useGetProductsQuery,
+  useGetUserProductsQuery,
 } from "../../api/product/productQueries";
 
 import AddProductForm from "../../components/admin/product/AddProductForm";
 import EditProductForm from "../../components/admin/product/editProductFomr";
+import { Search } from "lucide-react";
+import { Input } from "../../components/ui/input";
+import { useState } from "react";
+import { useGetCategoryQuery } from "../../api/category/categoryQueries";
 
 export default function ProductManagementPage() {
-  const { data: products, isLoading } = useGetProductsQuery();
   const deleteProductFn = useDeleteProductQuery();
+  const [categoryId, setCategoryId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const { data: categories, isLoading: categoriesLoading } =
+    useGetCategoryQuery();
   const deleteProduct = async (id: string) => {
     await deleteProductFn.mutateAsync({ id });
   };
-
+  const { data: products, isLoading } = useGetUserProductsQuery({
+    categoryId,
+    searchTerm,
+    role: "ADMIN",
+  });
   return (
     <div className="min-h-screen bg-background">
       <header className="flex h-16 justify-between items-center gap-4 border-b bg-sidebar px-6">
@@ -34,6 +46,35 @@ export default function ProductManagementPage() {
         <AddProductForm />
       </header>
       <main className="p-8">
+        <div className="mx-auto mb-10 flex max-w-5xl flex-col gap-4 md:flex-row">
+          <div className="relative w-full">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search products..."
+              className="h-14 rounded-full border-2 pl-12 pr-6 shadow-sm"
+            />
+          </div>
+
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            className="h-14 rounded-full  bg-background px-6"
+          >
+            <option value="">All Categories</option>
+            {categoriesLoading ? (
+              <option>Loading...</option>
+            ) : (
+              categories.map((category: any) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
         {isLoading ? (
           <div className="flex h-[60vh] items-center justify-center">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />

@@ -3,8 +3,8 @@ import { addItem, removeItem, getItem } from "../controllers/cart.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => getItem(req, res));
-router.post("/", async (req, res) => addItem(req, res));
-router.post("/decrease", async (req, res) => removeItem(req, res));
+router.get("/", getItem);
+router.post("/", addItem);
+router.post("/decrease", removeItem);
 
 export default router;

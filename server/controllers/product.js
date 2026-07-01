@@ -3,8 +3,19 @@ import multer from "multer";
 import { prisma } from "../lib/prisma.js";
 
 export const getProducts = async (req, res) => {
+  const { categoryId, searchTerm, role } = req.query;
+  console.log(searchTerm, role, categoryId);
   try {
-    const products = await prisma.product.findMany({
+    let products = [];
+
+    products = await prisma.product.findMany({
+      where: {
+        ...(role === "CUSTOMER" && {
+          status: { in: ["ACTIVE", "OUT_OF_STOCK"] },
+        }),
+        ...(searchTerm && { name: { contains: searchTerm } }),
+        ...(categoryId && { categoryId: categoryId }),
+      },
       include: {
         category: true,
       },

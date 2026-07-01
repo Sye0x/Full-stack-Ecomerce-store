@@ -4,7 +4,6 @@ import { prisma } from "../lib/prisma.js";
 export const getItem = async (req, res) => {
   const { userId } = req.query;
   console.log(req.query);
-  console.log("Hello:", userId);
   try {
     let cart = await prisma.cart.findFirst({
       where: { userId: userId },

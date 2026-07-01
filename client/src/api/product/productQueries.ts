@@ -29,10 +29,18 @@ export const useEditProductQuery = () => {
   });
 };
 
+export const useGetUserProductsQuery = (params: productParams) => {
+  return useQuery({
+    queryKey: ["products", params.categoryId, params.searchTerm, params.role],
+    queryFn: () => useGetProducts(params),
+  });
+};
+
 export const useGetProductsQuery = () => {
   return useQuery({
     queryKey: ["products"],
-    queryFn: useGetProducts,
+    queryFn: () =>
+      useGetProducts({ categoryId: "", searchTerm: "", role: "ADMIN" }),
   });
 };
 

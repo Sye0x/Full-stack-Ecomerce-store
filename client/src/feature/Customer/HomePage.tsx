@@ -8,23 +8,33 @@ import {
   CardFooter,
 } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
-import { useGetProductsQuery } from "../../api/product/productQueries";
+import { useGetUserProductsQuery } from "../../api/product/productQueries";
 import { useAddCartQuery, useGetCartsQuery } from "../../api/cart/cartQueries";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../state/store";
 import { useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useLogoutQuery } from "../../api/auth/authQueries";
+import { useGetCategoryQuery } from "../../api/category/categoryQueries";
 export default function HomePage() {
   const navigation = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const addCartItemFn = useAddCartQuery();
   const userId = useSelector((state: RootState) => state.auth.id);
+  const { data: categories, isLoading: categoriesLoading } =
+    useGetCategoryQuery();
+  console.log("categories:", categories);
+  const [categoryId, setCategoryId] = useState("");
   const { data: cartItem } = useGetCartsQuery({ userId });
-  const { data: products, isLoading } = useGetProductsQuery();
+  const { data: products, isLoading } = useGetUserProductsQuery({
+    categoryId,
+    searchTerm,
+    role: "CUSTOMER",
+  });
+  console.log("products:", products);
+  console.log("searchTerm:", searchTerm);
 
   const LogOutFn = useLogoutQuery();
 
@@ -33,37 +43,6 @@ export default function HomePage() {
       addCartItemFn.mutateAsync({ userId, productId, price });
     }
   };
-
-  const categories = useMemo(() => {
-    if (!products) return ["All"];
-
-    return [
-      "All",
-      ...new Set(
-        products
-          .filter((product: any) => product.category?.name)
-          .map((product: any) => product.category.name),
-      ),
-    ];
-  }, [products]);
-
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
-
-    return products.filter((product: any) => {
-      if (product.status === "INACTIVE") return false;
-
-      const matchesSearch = product.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-
-      const matchesCategory =
-        selectedCategory === "All" ||
-        product.category?.name === selectedCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [products, searchTerm, selectedCategory]);
 
   const Logout = async () => {
     await LogOutFn.mutateAsync();
@@ -118,15 +97,20 @@ export default function HomePage() {
           </div>
 
           <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
             className="h-14 rounded-full  bg-background px-6"
           >
-            {categories.map((category: any) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
+            <option value="">All Categories</option>
+            {categoriesLoading ? (
+              <option>Loading...</option>
+            ) : (
+              categories.map((category: any) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
         <div>
@@ -136,7 +120,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredProducts.map((product: any) => (
+              {products.map((product: any) => (
                 <Card
                   key={product.id}
                   className="p-0 group overflow-hidden rounded-2xl  bg-card shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"

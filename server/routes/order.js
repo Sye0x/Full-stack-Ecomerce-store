@@ -8,9 +8,9 @@ import {
 
 const router = express.Router();
 
-router.post("/", async (req, res) => createOrder(req, res));
-router.post("/statusUpdate", async (req, res) => setStatus(req, res));
-router.get("/user", async (req, res) => getUserOrder(req, res));
-router.get("/", async (req, res) => getOrder(req, res));
+router.post("/", createOrder);
+router.post("/statusUpdate", setStatus);
+router.get("/user", getUserOrder);
+router.get("/", getOrder);
 
 export default router;

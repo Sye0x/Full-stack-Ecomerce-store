@@ -4,10 +4,10 @@ import { login, logout, register } from "../controllers/auth.js";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => register(req, res));
+router.post("/register", register);
 
-router.post("/login", async (req, res) => login(req, res));
+router.post("/login", login);
 
-router.post("/logout", (req, res) => logout(req, res));
+router.post("/logout", logout);
 
 export default router;

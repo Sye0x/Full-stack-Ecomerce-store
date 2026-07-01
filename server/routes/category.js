@@ -8,9 +8,9 @@ import {
 
 const router = express.Router();
 
-router.post("/", async (req, res) => addCategory(req, res));
-router.get("/", async (req, res) => getCategory(req, res));
-router.delete("/", async (req, res) => removeCategory(req, res));
-router.put("/", async (req, res) => editCategory(req, res));
+router.post("/", addCategory);
+router.get("/", getCategory);
+router.delete("/", removeCategory);
+router.put("/", editCategory);
 
 export default router;
